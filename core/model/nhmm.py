@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -782,7 +780,7 @@ class NeuralResidentialHMM(nn.Module):
             # omega
             emission_probs = self.emission_net(state_embeddings, observation_encodings, x[:, t])
             residence_probs = self.residence_net(state_embeddings, context=beat_t)
-            transition_forward = self.viterbi_step(state_embeddings, omega[t - 1][:, :, 0], context=pitch_histo_encoding)
+            _omega_tr, _omega_args_tr, tmat = self.viterbi_step(state_embeddings, omega[t - 1][:, :, 0], context=pitch_histo_encoding)
             omega_t = torch.zeros((batch_size, self.num_state, self.max_residential_time)).to(self.device)
             omega_args_t = torch.zeros((batch_size, self.num_state, self.max_residential_time)).long().to(self.device)
             for r in range(self.max_residential_time):
@@ -790,7 +788,8 @@ class NeuralResidentialHMM(nn.Module):
                     residence_pr = residence_probs[:, r].unsqueeze(0).repeat(batch_size, 1)
                 else:
                     residence_pr = residence_probs[:, :, r]
-                omega_tr, omega_args_tr, _ = deepcopy(transition_forward)
+                omega_tr = _omega_tr.clone()
+                omega_args_tr = _omega_args_tr.clone()
                 omega_tr += torch.log(residence_pr)
                 omega_tr += torch.log(emission_probs)
                 if r < (self.max_residential_time - 1):
@@ -802,10 +801,8 @@ class NeuralResidentialHMM(nn.Module):
                     omega_args_tr = omega_args_tr_cat.gather(-1, gather_index.unsqueeze(-1)).squeeze()
                 omega_t[:, :, r] = omega_tr
                 omega_args_t[:, :, r] = omega_args_tr
-
             omega.append(omega_t)
             omega_args.append(omega_args_t)
-            _, _, tmat = deepcopy(transition_forward)
             tmats.append(tmat.unsqueeze(0))
 
             if self.use_lstm:
