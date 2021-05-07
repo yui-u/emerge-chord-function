@@ -790,7 +790,7 @@ class NeuralResidentialHMM(nn.Module):
                     residence_pr = residence_probs[:, r].unsqueeze(0).repeat(batch_size, 1)
                 else:
                     residence_pr = residence_probs[:, :, r]
-                omega_tr, omega_args_tr, _ = transition_forward
+                omega_tr, omega_args_tr, _ = deepcopy(transition_forward)
                 omega_tr += torch.log(residence_pr)
                 omega_tr += torch.log(emission_probs)
                 if r < (self.max_residential_time - 1):
@@ -805,7 +805,7 @@ class NeuralResidentialHMM(nn.Module):
 
             omega.append(omega_t)
             omega_args.append(omega_args_t)
-            _, _, tmat = transition_forward
+            _, _, tmat = deepcopy(transition_forward)
             tmats.append(tmat.unsqueeze(0))
 
             if self.use_lstm:
