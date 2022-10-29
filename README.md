@@ -1,5 +1,5 @@
 # The Simulated Emergence of Chord Function
-This repository is the implementation of the paper: [The Simulated Emergence of Chord Function (Uehara and Tojo; EvoMUSART2021)](https://link.springer.com/chapter/10.1007/978-3-030-72914-1_18).
+This repository is the implementation of [The Simulated Emergence of Chord Function (Uehara and Tojo; EvoMUSART2021)](https://link.springer.com/chapter/10.1007/978-3-030-72914-1_18) and the extended paper [Chord Function Recognition as Latent State Transition (SN Computer Science 3:508 2022)](https://link.springer.com/article/10.1007/s42979-022-01395-4).
 
 ## Requirements
 - Python 3.8.2
