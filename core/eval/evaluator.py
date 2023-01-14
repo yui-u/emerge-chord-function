@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, RandomSampler
@@ -22,8 +24,8 @@ class Evaluator(object):
         model.zero_grad()
         losses = []
         total_loss = 0.0
-        total_perplexity = 0.0
         total_items = 0
+        total_tokens = 0
         total_output = []
         for _, batch in enumerate(data_loader):
             batch = batch_to_device(batch, config.device)
@@ -32,20 +34,20 @@ class Evaluator(object):
                 output = model(batch)
                 viterbi_output = model.viterbi(batch)
                 logliks = output[LOG_LIKELIHOOD]
-                perplexity = output[PERPLEXITY]
                 total_loss += -logliks.sum().item()
-                total_perplexity += perplexity.sum().item()
                 total_items += output[BATCH_SIZE]
+                sequence_length = batch['sequence_length'] - 1  # remove start symbol
+                total_tokens += sequence_length.sum().item()
                 total_output.append(viterbi_output)
+        average_perplexity = math.exp(total_loss / total_tokens)
         total_loss /= total_items
-        total_perplexity /= total_items
         losses.append(total_loss)
-        logger.info('Eval-Loss:{}, Perplexity: {}'.format(total_loss, total_perplexity))
+        logger.info('Eval-Loss:{}, Perplexity: {}'.format(total_loss, average_perplexity))
 
         return {
             TOTAL_LOSS: total_loss,
             OUTPUT: total_output,
-            PERPLEXITY: total_perplexity
+            PERPLEXITY: average_perplexity
         }
 
     @staticmethod

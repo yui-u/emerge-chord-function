@@ -50,6 +50,10 @@ python run_nhmm.py --model_type hsmm --use_lstm --use_histogram --use_pitch --us
 ## Samples of Our Trained Models
 Samples of our trained models can be found at: [trained_models](trained_models)
 
+## Note
+Although the resulting values are similar, the latest code changes the way perplexity is averaged in the evaluation.
+For more information on this, see Appendix B of my [thesis](http://hdl.handle.net/10119/18139).
+
 ## License and Reference
 MIT License: [LICENSE](LICENSE)
 
