@@ -5,6 +5,9 @@ This repository is the implementation of [The Simulated Emergence of Chord Funct
 - Python 3.8.2
 - Required packages are listed in: [requirements.txt](requirements.txt)
 
+**Note:** This repository documents the code and software environment used in the research. 
+The dependencies are not actively maintained or monitored for security vulnerabilities.
+
 ## Training
 - Set the flag ``--do_train`` for training.
 
